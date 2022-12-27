@@ -1,0 +1,225 @@
+new;cls;
+
+pfad = "00-codes";
+
+
+workdirec = pfad $+"\\programs";
+chdir ^workdirec;
+datapfad  = pfad $+"\\data"; 
+outpfad  =  pfad $+"\\results"; 
+
+samplesize={400, 1600,6400};
+
+rndseed 20220911;
+
+for k(1,3,1); //sample size up to 3
+   n= samplesize[k];
+
+for b(0,1,1); 
+    for mc(1,1,1);
+@generate random variables    @
+@Covariates: x1, x2, x3 @
+    mcov={1.0  0.7 0.6 ,
+       0.7  1.0 0.6,
+	   0.6 0.6 1};
+if b==0;
+    xall = rndMVn(n,zeros(3,1),mcov);
+x1=xall[.,1];
+x2=xall[.,2]; 
+x3=xall[.,3];
+
+elseif b==1;
+    xall=corruni(n,3,mcov);
+x1=2*xall[.,1]-1;
+x2=2*xall[.,2]-1; //Uniform [-1,1] : if u~U[0,1]--> a+(b-a)*u~U[a,b]
+x3=2*xall[.,3]-1;
+
+endif;
+x1 = setColNames(x1, "x1");
+x2 = setColNames(x2, "x2");
+x3 = setColNames(x3, "x3");
+    x=x1~x2~x3;
+vnamesx = "x1" $| "x2" $| "x3";
+namex =  datapfad $+ "\\X_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((mc),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".dat";
+//savex=saved(x,namex,vnamesx);
+
+
+errdu=rndu(n,1);
+psi1=rndn(n,1);
+psi0=rndn(n,1);
+errors=psi1~psi0~errdu;
+vnameserr= "psi1" $| "psi0" $| "errdu";
+nameerr =  datapfad $+ "\\errors_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((mc),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".dat";
+//savex=saved(errors,nameerr,vnameserr);
+
+@generate outcomes@
+beta1_1={3,4,2};
+beta1_2={3,4,2,1};
+Y1_1=(ones(n,1)~x1~x2)*beta1_1+psi1;
+Y1_2=(ones(n,1)~x1~x2~x3)*beta1_2+psi1;
+Y1_3=(ones(n,1)~x1~x2~x1.^2)*beta1_2+psi1;
+
+beta0_1_hom={1,4,2};
+beta0_2_hom={1,4,2,1};
+Y0_1_hom=(ones(n,1)~x1~x2)*beta0_1_hom+psi0;
+Y0_2_hom=(ones(n,1)~x1~x2~x3)*beta0_2_hom+psi0;
+Y0_3_hom=(ones(n,1)~x1~x2~x1.^2)*beta0_2_hom+psi0;
+
+beta0_1_het={1,5,-1};
+beta0_2_het={1,5,-1,2};
+Y0_1_het=(ones(n,1)~x1~x2)*beta0_1_het+psi0;
+Y0_2_het=(ones(n,1)~x1~x2~x3)*beta0_2_het+psi0;
+Y0_3_het=(ones(n,1)~x1~x2~x1.^2)*beta0_2_het+psi0;
+
+@generate treatments@
+if b==0;
+@1~x1~x2@
+alpha1_1={0,1.5,1};   
+alpha1_2={2,1.5,1};
+alpha1_3={-2,1.5,1};
+@1~x1~x2~x3@
+alpha2_1={0,1.5,1, 0.5};   
+alpha2_2={2.2,1.5,1, 0.5};
+alpha2_3={-2.2,1.5,1, 0.5};
+@1~x1~x2~x1^2@
+alpha3_1={0.5,1.5,1,-1};
+alpha3_2={2.6,1.5,1,-1};
+alpha3_3={-1.15,1.5,1,-1};   
+
+    
+elseif b==1;
+    
+       
+@1~x1~x2@ 
+alpha1_1={0,1.5,1};  
+alpha1_2={1.5,1.5,1}; 
+alpha1_3={-1.5,1.5,1}; 
+    
+    
+@1~x1~x2~x3@
+alpha2_1={0,1.5,1, 0.5};  
+alpha2_2={1.6,1.5,1,0.5 }; 
+alpha2_3={-1.6,1.5,1,0.5 }; 
+    
+    
+@1~x1~x2~x1^2@
+alpha3_1={0.5,1.5,1,-2};
+alpha3_2={2.15,1.5,1,-2 };   
+alpha3_3={-0.9,1.5,1,-2};        
+    
+endif;
+
+
+d1_1x=(ones(n,1)~x1~x2)*alpha1_1;
+d1_2x=(ones(n,1)~x1~x2)*alpha1_2;
+d1_3x=(ones(n,1)~x1~x2)*alpha1_3;
+
+d2_1x=(ones(n,1)~x1~x2~x3)*alpha2_1;
+d2_2x=(ones(n,1)~x1~x2~x3)*alpha2_2;
+d2_3x=(ones(n,1)~x1~x2~x3)*alpha2_3;
+
+d3_1x=(ones(n,1)~x1~x2~x1.^2)*alpha3_1;
+d3_2x=(ones(n,1)~x1~x2~x1.^2)*alpha3_2;
+d3_3x=(ones(n,1)~x1~x2~x1.^2)*alpha3_3;
+
+ps1_1=exp(d1_1x)./(1+exp(d1_1x));
+ps1_2=exp(d1_2x)./(1+exp(d1_2x));
+ps1_3=exp(d1_3x)./(1+exp(d1_3x));
+
+ps2_1=exp(d2_1x)./(1+exp(d2_1x));
+ps2_2=exp(d2_2x)./(1+exp(d2_2x));
+ps2_3=exp(d2_3x)./(1+exp(d2_3x));
+
+ps3_1=exp(d3_1x)./(1+exp(d3_1x));
+ps3_2=exp(d3_2x)./(1+exp(d3_2x));
+ps3_3=exp(d3_3x)./(1+exp(d3_3x));
+
+d1_1=(errdu.<ps1_1);
+d1_2=(errdu.<ps1_2);
+d1_3=(errdu.<ps1_3);
+
+d2_1=(errdu.<ps2_1);
+d2_2=(errdu.<ps2_2);
+d2_3=(errdu.<ps2_3);
+
+d3_1=(errdu.<ps3_1);
+d3_2=(errdu.<ps3_2);
+d3_3=(errdu.<ps3_3);
+
+
+data = y1_1~y1_2~y1_3~y0_1_hom~y0_2_hom~y0_3_hom~y0_1_het~y0_2_het~y0_3_het~x1~x2~x3~d1_1~d1_2~d1_3~d2_1~d2_2~d2_3~d3_1~d3_2~d3_3;
+
+vnameall= "y1_1" $| "y1_2" $| "y1_3" $| "y0_1_hom" $| "y0_2_hom" $| "y0_3_hom" $| "y0_1_het" $| "y0_2_het" $| "y0_3_het" $| "x1" $| "x2" $| "x3" $| "d1_1" $| "d1_2" $| "d1_3" $| "d2_1" $| "d2_2" $| "d2_3" $| "d3_1" $| "d3_2" $| "d3_3";
+
+nameall =  datapfad $+ "\\data_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((mc),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".dat";
+savex=saved(data,nameall,vnameall);
+
+if k ==3;
+ate_dgp1_hom= meanc(y1_1-y0_1_hom);
+ate_dgp2_hom= meanc(y1_1-y0_1_hom);
+ate_dgp3_hom= meanc(y1_2-y0_2_hom);
+ate_dgp4_hom= meanc(y1_2-y0_2_hom);
+ate_dgp5_hom= meanc(y1_3-y0_3_hom);
+ate_dgp6_hom= meanc(y1_1-y0_1_hom);
+
+ate_dgp1_het= meanc(y1_1-y0_1_het);
+ate_dgp2_het= meanc(y1_1-y0_1_het);
+ate_dgp3_het= meanc(y1_2-y0_2_het);
+ate_dgp4_het= meanc(y1_2-y0_2_het);
+ate_dgp5_het= meanc(y1_3-y0_3_het);
+ate_dgp6_het= meanc(y1_1-y0_1_het);
+
+ate_hom= ate_dgp1_hom~ate_dgp2_hom~ate_dgp3_hom~ate_dgp4_hom~ate_dgp5_hom~ate_dgp6_hom;
+ate_het= ate_dgp1_het~ate_dgp2_het~ate_dgp3_het~ate_dgp4_het~ate_dgp5_het~ate_dgp6_het;
+
+vnamedgp= "dgp1" $| "dgp2" $| "dgp3" $| "dgp4" $| "dgp5" $| "dgp6";
+
+namehom =  datapfad $+ "\\ate_hom_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((mc),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".dat";
+saveatehom=saved(ate_hom,namehom,vnamedgp);
+
+namehet =  datapfad $+ "\\ate_het_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((mc),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".dat";
+saveatehet=saved(ate_het,namehet,vnamedgp);
+endif;
+
+endfor;
+
+endfor;
+endfor;
+
+
+
+proc corruni(n,k,m);
+
+local x, y,c,i;
+X = rndn(n,k);
+
+
+// desired correlation
+/*M ={1.0  0.7  0.6,
+    0.7  1.0  0.6,
+    0.6  0.6  1.0};*/
+
+// adjust correlations for uniforms
+i=1;
+do while i<=k;
+
+    for j (1,k,1);
+        if i .ne j;
+            M[i, j] = 2 * sin(pi * M[i, j] / 6);
+            M[j, i] = 2 * sin(pi * M[j, i] / 6);
+        endif;
+    endfor;
+i=i+1;
+endo;
+
+// induce correlation, check correlationsy = chol(x);
+
+
+C = chol(M);
+Y = X * C;
+
+// create uniforms, check correlations
+Y[.,1:k] = cdfn(Y[.,1:k]);
+
+retp(y);
+endp;

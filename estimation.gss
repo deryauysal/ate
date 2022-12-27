@@ -1,0 +1,358 @@
+new;cls;
+    struct OutputsATE {
+   matrix ate;
+   matrix atese;
+   matrix pars;
+   matrix parsse;
+   matrix retcode;
+};
+
+
+
+pfad = "00-codes";
+
+
+workdirec = pfad $+"\\programs";
+chdir ^workdirec;
+datapfad  = pfad $+"\\data"; 
+outpfad  =  pfad $+"\\results"; 
+
+
+
+
+mc_ate_1_1=zeros(1000,48);
+mc_ate_2_1=zeros(1000,48);
+mc_ate_3_1=zeros(1000,48);
+mc_ate_4_1=zeros(1000,48);
+mc_ate_5_1=zeros(1000,48);
+mc_ate_6_1=zeros(1000,48);
+
+mc_sem_1_1=zeros(1000,48);
+mc_sem_2_1=zeros(1000,48);
+mc_sem_3_1=zeros(1000,48);
+mc_sem_4_1=zeros(1000,48);
+mc_sem_5_1=zeros(1000,48);
+mc_sem_6_1=zeros(1000,48);
+
+mc_sef_1_1=zeros(1000,48);
+mc_sef_2_1=zeros(1000,48);
+mc_sef_3_1=zeros(1000,48);
+mc_sef_4_1=zeros(1000,48);
+mc_sef_5_1=zeros(1000,48);
+mc_sef_6_1=zeros(1000,48);
+
+mc_retcode_1_1=zeros(1000,48);
+mc_retcode_2_1=zeros(1000,48);
+mc_retcode_3_1=zeros(1000,48);
+mc_retcode_4_1=zeros(1000,48);
+mc_retcode_5_1=zeros(1000,48);
+mc_retcode_6_1=zeros(1000,48);
+
+samplesize={400, 1600, 6400};
+//b=1; k=1;mc=1;n=400;
+for k(3,3,1); //sample size up to 3
+   n= samplesize[k];
+for b(1,1,1); 
+    for mc(1,1000,1);
+
+nameall =  datapfad $+ "\\data_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((mc),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".dat";        
+data = loadd(nameall);
+     
+y1_1=data[., "y1_1"];
+y1_2=data[., "y1_2"];
+y1_3=data[., "y1_3"];
+y0_1_hom=data[., "y0_1_hom"];
+y0_2_hom=data[., "y0_2_hom"];
+y0_3_hom=data[., "y0_3_hom"];
+y0_1_het=data[., "y0_1_het"];
+y0_2_het=data[., "y0_2_het"];
+y0_3_het=data[., "y0_3_het"];
+x1=data[., "x1"];
+x2=data[., "x2"];
+x3=data[., "x3"];
+d1_1=data[., "d1_1"];
+d1_2=data[., "d1_2"];       
+d1_3=data[., "d1_3"];
+d2_1=data[., "d2_1"];
+d2_2=data[., "d2_2"];
+d2_3=data[., "d2_3"];
+d3_1=data[., "d3_1"];
+d3_2=data[., "d3_2"];
+d3_3=data[., "d3_3"];
+
+xreg= ones(n,1)~x1~x2;
+
+y_hom_1_1_1=y1_1.*d1_1+y0_1_hom.*(1-d1_1);   //Y correct, hom, d correct ratio 1
+y_hom_2_1_1=y1_2.*d1_1+y0_2_hom.*(1-d1_1);   //Y wrong hom, d correct ratio 1
+y_hom_3_1_1=y1_3.*d1_1+y0_3_hom.*(1-d1_1);   //Y wrong hom,  d correct ratio 1
+
+y_het_1_1_1=y1_1.*d1_1+y0_1_het.*(1-d1_1);   //Y correct, het,d correct ratio 1
+y_het_2_1_1=y1_2.*d1_1+y0_2_het.*(1-d1_1);   //Y wrong, het,d correct ratio 1
+y_het_3_1_1=y1_3.*d1_1+y0_3_het.*(1-d1_1);   //Y wrong, het, d correct ratio 1
+
+y_hom_1_1_2=y1_1.*d1_2+y0_1_hom.*(1-d1_2);   //Y correct, hom, d correct ratio 2
+y_hom_2_1_2=y1_2.*d1_2+y0_2_hom.*(1-d1_2);   //Y wrong hom, d correct ratio 2
+y_hom_3_1_2=y1_3.*d1_2+y0_3_hom.*(1-d1_2);   //Y wrong hom,  d correct ratio 2
+
+y_het_1_1_2=y1_1.*d1_2+y0_1_het.*(1-d1_2);   //Y correct, het,d correct ratio 2
+y_het_2_1_2=y1_2.*d1_2+y0_2_het.*(1-d1_2);   //Y wrong, het,d correct ratio 2
+y_het_3_1_2=y1_3.*d1_2+y0_3_het.*(1-d1_2);   //Y wrong, het, d correct ratio 2
+
+y_hom_1_1_3=y1_1.*d1_3+y0_1_hom.*(1-d1_3);   //Y correct, hom, d correct ratio 3
+y_hom_2_1_3=y1_2.*d1_3+y0_2_hom.*(1-d1_3);   //Y wrong hom, d correct ratio 3
+y_hom_3_1_3=y1_3.*d1_3+y0_3_hom.*(1-d1_3);   //Y wrong hom,  d correct ratio 3
+
+y_het_1_1_3=y1_1.*d1_3+y0_1_het.*(1-d1_3);   //Y correct, het,d correct ratio 3
+y_het_2_1_3=y1_2.*d1_3+y0_2_het.*(1-d1_3);   //Y wrong, het,d correct ratio 3
+y_het_3_1_3=y1_3.*d1_3+y0_3_het.*(1-d1_3);   //Y wrong, het, d correct ratio 3
+
+
+////D wrong
+
+y_hom_1_2_1=y1_1.*d2_1+y0_1_hom.*(1-d2_1);   //Y correct, hom, d wrong ratio 1
+y_hom_2_2_1=y1_2.*d2_1+y0_2_hom.*(1-d2_1);   //Y wrong hom, d wrong ratio 1
+y_hom_3_2_1=y1_3.*d2_1+y0_3_hom.*(1-d2_1);   //Y wrong hom,  d wrong ratio 1
+
+y_het_1_2_1=y1_1.*d2_1+y0_1_het.*(1-d2_1);   //Y correct, het,d wrong ratio 1
+y_het_2_2_1=y1_2.*d2_1+y0_2_het.*(1-d2_1);   //Y wrong, het,d wrong ratio 1
+y_het_3_2_1=y1_3.*d2_1+y0_3_het.*(1-d2_1);   //Y wrong, het, d wrong ratio 1
+
+y_hom_1_2_2=y1_1.*d2_2+y0_1_hom.*(1-d2_2);   //Y correct, hom, d wrong ratio 2
+y_hom_2_2_2=y1_2.*d2_2+y0_2_hom.*(1-d2_2);   //Y wrong hom, d wrong ratio 2
+y_hom_3_2_2=y1_3.*d2_2+y0_3_hom.*(1-d2_2);   //Y wrong hom,  d wrong ratio 2
+
+y_het_1_2_2=y1_1.*d2_2+y0_1_het.*(1-d2_2);   //Y correct, het,d wrong ratio 2
+y_het_2_2_2=y1_2.*d2_2+y0_2_het.*(1-d2_2);   //Y wrong, het,d wrong ratio 2
+y_het_3_2_2=y1_3.*d2_2+y0_3_het.*(1-d2_2);   //Y wrong, het, d wrong ratio 2
+
+y_hom_1_2_3=y1_1.*d2_3+y0_1_hom.*(1-d2_3);   //Y correct, hom, d wrong ratio 3
+y_hom_2_2_3=y1_2.*d2_3+y0_2_hom.*(1-d2_3);   //Y wrong hom, d wrong ratio 3
+y_hom_3_2_3=y1_3.*d2_3+y0_3_hom.*(1-d2_3);   //Y wrong hom,  d wrong ratio 3
+
+y_het_1_2_3=y1_1.*d2_3+y0_1_het.*(1-d2_3);   //Y correct, het,d wrong ratio 3
+y_het_2_2_3=y1_2.*d2_3+y0_2_het.*(1-d2_3);   //Y wrong, het,d wrong ratio 3
+y_het_3_2_3=y1_3.*d2_3+y0_3_het.*(1-d2_3);   //Y wrong, het, d wrong ratio 3
+
+////D wrong (x1^2 missing)
+
+y_hom_1_3_1=y1_1.*d3_1+y0_1_hom.*(1-d3_1);   //Y correct, hom, d wrong ratio 1
+y_hom_2_3_1=y1_2.*d3_1+y0_2_hom.*(1-d3_1);   //Y wrong hom, d wrong ratio 1
+y_hom_3_3_1=y1_3.*d3_1+y0_3_hom.*(1-d3_1);   //Y wrong hom,  d wrong ratio 1
+
+y_het_1_3_1=y1_1.*d3_1+y0_1_het.*(1-d3_1);   //Y correct, het,d wrong ratio 1
+y_het_2_3_1=y1_2.*d3_1+y0_2_het.*(1-d3_1);   //Y wrong, het,d wrong ratio 1
+y_het_3_3_1=y1_3.*d3_1+y0_3_het.*(1-d3_1);   //Y wrong, het, d wrong ratio 1
+
+y_hom_1_3_2=y1_1.*d3_2+y0_1_hom.*(1-d3_2);   //Y correct, hom, d wrong ratio 2
+y_hom_2_3_2=y1_2.*d3_2+y0_2_hom.*(1-d3_2);   //Y wrong hom, d wrong ratio 2
+y_hom_3_3_2=y1_3.*d3_2+y0_3_hom.*(1-d3_2);   //Y wrong hom,  d wrong ratio 2
+
+y_het_1_3_2=y1_1.*d3_2+y0_1_het.*(1-d3_2);   //Y correct, het,d wrong ratio 2
+y_het_2_3_2=y1_2.*d3_2+y0_2_het.*(1-d3_2);   //Y wrong, het,d wrong ratio 2
+y_het_3_3_2=y1_3.*d3_2+y0_3_het.*(1-d3_2);   //Y wrong, het, d wrong ratio 2
+
+y_hom_1_3_3=y1_1.*d3_3+y0_1_hom.*(1-d3_3);   //Y correct, hom, d wrong ratio 3
+y_hom_2_3_3=y1_2.*d3_3+y0_2_hom.*(1-d3_3);   //Y wrong hom, d wrong ratio 3
+y_hom_3_3_3=y1_3.*d3_3+y0_3_hom.*(1-d3_3);   //Y wrong hom,  d wrong ratio 3
+
+y_het_1_3_3=y1_1.*d3_3+y0_1_het.*(1-d3_3);   //Y correct, het,d wrong ratio 3
+y_het_2_3_3=y1_2.*d3_3+y0_2_het.*(1-d3_3);   //Y wrong, het,d wrong ratio 3
+y_het_3_3_3=y1_3.*d3_3+y0_3_het.*(1-d3_3);   //Y wrong, het, d wrong ratio 3
+  
+//(results_ate, results_sem, results_seaf, retcodes);
+////////
+//Hom 
+//Ratio1
+//DGP1_   ate_DGP_Ratio_hom
+{ate_1_1_1, sem_ate_1_1_1, sef_ate_1_1_1, retc_ate_1_1_1}=alltheestimation(n, xreg, d1_1, y_hom_1_1_1);
+//DGP2
+{ate_2_1_1, sem_ate_2_1_1, sef_ate_2_1_1, retc_ate_2_1_1}=alltheestimation(n, xreg, d2_1, y_hom_1_2_1);
+//DGP3
+{ate_3_1_1, sem_ate_3_1_1, sef_ate_3_1_1, retc_ate_3_1_1}=alltheestimation(n, xreg, d1_1, y_hom_2_1_1);
+//DGP4
+{ate_4_1_1, sem_ate_4_1_1, sef_ate_4_1_1, retc_ate_4_1_1}=alltheestimation(n, xreg, d2_1, y_hom_2_2_1);
+//DGP5
+{ate_5_1_1, sem_ate_5_1_1, sef_ate_5_1_1, retc_ate_5_1_1}=alltheestimation(n, xreg, d1_1, y_hom_3_1_1);
+//DGP6
+{ate_6_1_1, sem_ate_6_1_1, sef_ate_6_1_1, retc_ate_6_1_1}=alltheestimation(n, xreg, d3_1, y_hom_1_3_1);
+
+
+//Het 
+//Ratio1
+//DGP1
+{ate_1_1_2, sem_ate_1_1_2, sef_ate_1_1_2, retc_ate_1_1_2}=alltheestimation(n, xreg, d1_1, y_het_1_1_1);
+//DGP2
+{ate_2_1_2, sem_ate_2_1_2, sef_ate_2_1_2, retc_ate_2_1_2}=alltheestimation(n, xreg, d2_1, y_het_1_2_1);
+//DGP3
+{ate_3_1_2, sem_ate_3_1_2, sef_ate_3_1_2, retc_ate_3_1_2}=alltheestimation(n, xreg, d1_1, y_het_2_1_1);
+//DGP4
+{ate_4_1_2, sem_ate_4_1_2, sef_ate_4_1_2, retc_ate_4_1_2}=alltheestimation(n, xreg, d2_1, y_het_2_2_1);
+//DGP5
+{ate_5_1_2, sem_ate_5_1_2, sef_ate_5_1_2, retc_ate_5_1_2}=alltheestimation(n, xreg, d1_1, y_het_3_1_1);
+//DGP6
+{ate_6_1_2, sem_ate_6_1_2, sef_ate_6_1_2, retc_ate_6_1_2}=alltheestimation(n, xreg, d3_1, y_het_1_3_1);
+
+//Hom 
+//Ratio2
+//DGP1_   ate_DGP_Ratio_hom
+{ate_1_2_1, sem_ate_1_2_1, sef_ate_1_2_1, retc_ate_1_2_1}=alltheestimation(n, xreg, d1_2, y_hom_1_1_2);
+//DGP2
+{ate_2_2_1, sem_ate_2_2_1, sef_ate_2_2_1, retc_ate_2_2_1}=alltheestimation(n, xreg, d2_2, y_hom_1_2_2);
+//DGP3
+{ate_3_2_1, sem_ate_3_2_1, sef_ate_3_2_1, retc_ate_3_2_1}=alltheestimation(n, xreg, d1_2, y_hom_2_1_2);
+//DGP4
+{ate_4_2_1, sem_ate_4_2_1, sef_ate_4_2_1, retc_ate_4_2_1}=alltheestimation(n, xreg, d2_2, y_hom_2_2_2);
+//DGP5
+{ate_5_2_1, sem_ate_5_2_1, sef_ate_5_2_1, retc_ate_5_2_1}=alltheestimation(n, xreg, d1_2, y_hom_3_1_2);
+//DGP6
+{ate_6_2_1, sem_ate_6_2_1, sef_ate_6_2_1, retc_ate_6_2_1}=alltheestimation(n, xreg, d3_2, y_hom_1_3_2);
+
+
+//Het 
+//Ratio2
+//DGP1
+{ate_1_2_2, sem_ate_1_2_2, sef_ate_1_2_2, retc_ate_1_2_2}=alltheestimation(n, xreg, d1_2, y_het_1_1_2);
+//DGP2
+{ate_2_2_2, sem_ate_2_2_2, sef_ate_2_2_2, retc_ate_2_2_2}=alltheestimation(n, xreg, d2_2, y_het_1_2_2);
+//DGP3
+{ate_3_2_2, sem_ate_3_2_2, sef_ate_3_2_2, retc_ate_3_2_2}=alltheestimation(n, xreg, d1_2, y_het_2_1_2);
+//DGP4
+{ate_4_2_2, sem_ate_4_2_2, sef_ate_4_2_2, retc_ate_4_2_2}=alltheestimation(n, xreg, d2_2, y_het_2_2_2);
+//DGP5
+{ate_5_2_2, sem_ate_5_2_2, sef_ate_5_2_2, retc_ate_5_2_2}=alltheestimation(n, xreg, d1_2, y_het_3_1_2);
+//DGP6
+{ate_6_2_2, sem_ate_6_2_2, sef_ate_6_2_2, retc_ate_6_2_2}=alltheestimation(n, xreg, d3_2, y_het_1_3_2);
+
+
+//Hom 
+//Ratio3
+//DGP1_   ate_DGP_Ratio_hom
+{ate_1_3_1, sem_ate_1_3_1, sef_ate_1_3_1, retc_ate_1_3_1}=alltheestimation(n, xreg, d1_3, y_hom_1_1_3);
+//DGP2
+{ate_2_3_1, sem_ate_2_3_1, sef_ate_2_3_1, retc_ate_2_3_1}=alltheestimation(n, xreg, d2_3, y_hom_1_2_3);
+//DGP3
+{ate_3_3_1, sem_ate_3_3_1, sef_ate_3_3_1, retc_ate_3_3_1}=alltheestimation(n, xreg, d1_3, y_hom_2_1_3);
+//DGP4
+{ate_4_3_1, sem_ate_4_3_1, sef_ate_4_3_1, retc_ate_4_3_1}=alltheestimation(n, xreg, d2_3, y_hom_2_2_3);
+//DGP5
+{ate_5_3_1, sem_ate_5_3_1, sef_ate_5_3_1, retc_ate_5_3_1}=alltheestimation(n, xreg, d1_3, y_hom_3_1_3);
+//DGP6
+{ate_6_3_1, sem_ate_6_3_1, sef_ate_6_3_1, retc_ate_6_3_1}=alltheestimation(n, xreg, d3_3, y_hom_1_3_3);
+
+
+//Het 
+//Ratio3
+//DGP1
+{ate_1_3_2, sem_ate_1_3_2, sef_ate_1_3_2, retc_ate_1_3_2}=alltheestimation(n, xreg, d1_3, y_het_1_1_3);
+//DGP2
+{ate_2_3_2, sem_ate_2_3_2, sef_ate_2_3_2, retc_ate_2_3_2}=alltheestimation(n, xreg, d2_3, y_het_1_2_3);
+//DGP3
+{ate_3_3_2, sem_ate_3_3_2, sef_ate_3_3_2, retc_ate_3_3_2}=alltheestimation(n, xreg, d1_3, y_het_2_1_3);
+//DGP4
+{ate_4_3_2, sem_ate_4_3_2, sef_ate_4_3_2, retc_ate_4_3_2}=alltheestimation(n, xreg, d2_3, y_het_2_2_3);
+//DGP5
+{ate_5_3_2, sem_ate_5_3_2, sef_ate_5_3_2, retc_ate_5_3_2}=alltheestimation(n, xreg, d1_3, y_het_3_1_3);
+//DGP6
+{ate_6_3_2, sem_ate_6_3_2, sef_ate_6_3_2, retc_ate_6_3_2}=alltheestimation(n, xreg, d3_3, y_het_1_3_3);
+
+mc_ate_1_1[mc,.]=ate_1_1_1~ate_1_1_2~ate_1_2_1~ate_1_2_2~ate_1_3_1~ate_1_3_2;
+mc_ate_2_1[mc,.]=ate_2_1_1~ate_2_1_2~ate_2_2_1~ate_2_2_2~ate_2_3_1~ate_2_3_2;
+mc_ate_3_1[mc,.]=ate_3_1_1~ate_3_1_2~ate_3_2_1~ate_3_2_2~ate_3_3_1~ate_3_3_2;
+mc_ate_4_1[mc,.]=ate_4_1_1~ate_4_1_2~ate_4_2_1~ate_4_2_2~ate_4_3_1~ate_4_3_2;
+mc_ate_5_1[mc,.]=ate_5_1_1~ate_5_1_2~ate_5_2_1~ate_5_2_2~ate_5_3_1~ate_5_3_2;
+mc_ate_6_1[mc,.]=ate_6_1_1~ate_6_1_2~ate_6_2_1~ate_6_2_2~ate_6_3_1~ate_6_3_2;
+
+mc_sem_1_1[mc,.]=sem_ate_1_1_1~sem_ate_1_1_2~sem_ate_1_2_1~sem_ate_1_2_2~sem_ate_1_3_1~sem_ate_1_3_2;
+mc_sem_2_1[mc,.]=sem_ate_2_1_1~sem_ate_2_1_2~sem_ate_2_2_1~sem_ate_2_2_2~sem_ate_2_3_1~sem_ate_2_3_2;
+mc_sem_3_1[mc,.]=sem_ate_3_1_1~sem_ate_3_1_2~sem_ate_3_2_1~sem_ate_3_2_2~sem_ate_3_3_1~sem_ate_3_3_2;
+mc_sem_4_1[mc,.]=sem_ate_4_1_1~sem_ate_4_1_2~sem_ate_4_2_1~sem_ate_4_2_2~sem_ate_4_3_1~sem_ate_4_3_2;
+mc_sem_5_1[mc,.]=sem_ate_5_1_1~sem_ate_5_1_2~sem_ate_5_2_1~sem_ate_5_2_2~sem_ate_5_3_1~sem_ate_5_3_2;
+mc_sem_6_1[mc,.]=sem_ate_6_1_1~sem_ate_6_1_2~sem_ate_6_2_1~sem_ate_6_2_2~sem_ate_6_3_1~sem_ate_6_3_2;
+
+mc_sef_1_1[mc,.]=sef_ate_1_1_1~sef_ate_1_1_2~sef_ate_1_2_1~sef_ate_1_2_2~sef_ate_1_3_1~sef_ate_1_3_2;
+mc_sef_2_1[mc,.]=sef_ate_2_1_1~sef_ate_2_1_2~sef_ate_2_2_1~sef_ate_2_2_2~sef_ate_2_3_1~sef_ate_2_3_2;
+mc_sef_3_1[mc,.]=sef_ate_3_1_1~sef_ate_3_1_2~sef_ate_3_2_1~sef_ate_3_2_2~sef_ate_3_3_1~sef_ate_3_3_2;
+mc_sef_4_1[mc,.]=sef_ate_4_1_1~sef_ate_4_1_2~sef_ate_4_2_1~sef_ate_4_2_2~sef_ate_4_3_1~sef_ate_4_3_2;
+mc_sef_5_1[mc,.]=sef_ate_5_1_1~sef_ate_5_1_2~sef_ate_5_2_1~sef_ate_5_2_2~sef_ate_5_3_1~sef_ate_5_3_2;
+mc_sef_6_1[mc,.]=sef_ate_6_1_1~sef_ate_6_1_2~sef_ate_6_2_1~sef_ate_6_2_2~sef_ate_6_3_1~sef_ate_6_3_2;
+
+mc_retcode_1_1[mc,.]=retc_ate_1_1_1~retc_ate_1_1_2~retc_ate_1_2_1~retc_ate_1_2_2~retc_ate_1_3_1~retc_ate_1_3_2;
+mc_retcode_2_1[mc,.]=retc_ate_2_1_1~retc_ate_2_1_2~retc_ate_2_2_1~retc_ate_2_2_2~retc_ate_2_3_1~retc_ate_2_3_2;
+mc_retcode_3_1[mc,.]=retc_ate_3_1_1~retc_ate_3_1_2~retc_ate_3_2_1~retc_ate_3_2_2~retc_ate_3_3_1~retc_ate_3_3_2;
+mc_retcode_4_1[mc,.]=retc_ate_4_1_1~retc_ate_4_1_2~retc_ate_4_2_1~retc_ate_4_2_2~retc_ate_4_3_1~retc_ate_4_3_2;
+mc_retcode_5_1[mc,.]=retc_ate_5_1_1~retc_ate_5_1_2~retc_ate_5_2_1~retc_ate_5_2_2~retc_ate_5_3_1~retc_ate_5_3_2;
+mc_retcode_6_1[mc,.]=retc_ate_6_1_1~retc_ate_6_1_2~retc_ate_6_2_1~retc_ate_6_2_2~retc_ate_6_3_1~retc_ate_6_3_2;
+cls;
+print "/****************************************************************/";
+print "/****************************************************************/";
+print "b   " b;
+print "n   " n;
+print "mc  " mc; 
+print "/****************************************************************/";
+print "/****************************************************************/";
+
+  endfor;
+vnames = "reg_11" $| "ipw1_11"$|"ipw2_11" $| "ipw3_11"$|"dr1a_11"$|"dr1b_11"$| "dr1c_11"$|"dr2_11" $|
+                              "reg_12" $| "ipw1_12"$|"ipw2_12" $| "ipw3_12"$|"dr1a_12"$|"dr1b_12"$| "dr1c_12"$|"dr2_12" $|
+                              "reg_21" $| "ipw1_21"$|"ipw2_21" $| "ipw3_21"$|"dr1a_21"$|"dr1b_21"$| "dr1c_21"$|"dr2_21" $|
+                              "reg_22" $| "ipw1_22"$|"ipw2_22" $| "ipw3_22"$|"dr1a_22"$|"dr1b_22"$| "dr1c_22"$|"dr2_22" $|
+                              "reg_31" $| "ipw1_31"$|"ipw2_31" $| "ipw3_31"$|"dr1a_31"$|"dr1b_31"$| "dr1c_31"$|"dr2_31" $|
+                              "reg_32" $| "ipw1_32"$|"ipw2_32" $| "ipw3_32"$|"dr1a_32"$|"dr1b_32"$| "dr1c_32"$|"dr2_32" ;
+  
+nameate_1_1 =  outpfad $+ "\\ate_1_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+nameate_2_1 =  outpfad $+ "\\ate_2_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+nameate_3_1 =  outpfad $+ "\\ate_3_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+nameate_4_1 =  outpfad $+ "\\ate_4_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+nameate_5_1 =  outpfad $+ "\\ate_5_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+nameate_6_1 =  outpfad $+ "\\ate_6_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+  
+saveate_1_1=saved(mc_ate_1_1,nameate_1_1,vnames);
+saveate_2_1=saved(mc_ate_2_1,nameate_2_1,vnames);
+saveate_3_1=saved(mc_ate_3_1,nameate_3_1,vnames);
+saveate_4_1=saved(mc_ate_4_1,nameate_4_1,vnames);
+saveate_5_1=saved(mc_ate_5_1,nameate_5_1,vnames);  
+saveate_6_1=saved(mc_ate_6_1,nameate_6_1,vnames); 
+  
+namesem_1_1 =  outpfad $+ "\\sem_1_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+namesem_2_1 =  outpfad $+ "\\sem_2_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+namesem_3_1 =  outpfad $+ "\\sem_3_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+namesem_4_1 =  outpfad $+ "\\sem_4_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+namesem_5_1 =  outpfad $+ "\\sem_5_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+namesem_6_1 =  outpfad $+ "\\sem_6_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+  
+savesem_1_1=saved(mc_sem_1_1,namesem_1_1,vnames);
+savesem_2_1=saved(mc_sem_2_1,namesem_2_1,vnames);
+savesem_3_1=saved(mc_sem_3_1,namesem_3_1,vnames);
+savesem_4_1=saved(mc_sem_4_1,namesem_4_1,vnames);
+savesem_5_1=saved(mc_sem_5_1,namesem_5_1,vnames);  
+savesem_6_1=saved(mc_sem_6_1,namesem_6_1,vnames);   
+  
+namesef_1_1 =  outpfad $+ "\\sef_1_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+namesef_2_1 =  outpfad $+ "\\sef_2_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+namesef_3_1 =  outpfad $+ "\\sef_3_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+namesef_4_1 =  outpfad $+ "\\sef_4_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+namesef_5_1 =  outpfad $+ "\\sef_5_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+namesef_6_1 =  outpfad $+ "\\sef_6_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+  
+savesef_1_1=saved(mc_sef_1_1,namesef_1_1,vnames);
+savesef_2_1=saved(mc_sef_2_1,namesef_2_1,vnames);
+savesef_3_1=saved(mc_sef_3_1,namesef_3_1,vnames);
+savesef_4_1=saved(mc_sef_4_1,namesef_4_1,vnames);
+savesef_5_1=saved(mc_sef_5_1,namesef_5_1,vnames);  
+savesef_6_1=saved(mc_sef_6_1,namesef_6_1,vnames);     
+  
+nameretcode_1_1 =  outpfad $+ "\\retcode_1_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+nameretcode_2_1 =  outpfad $+ "\\retcode_2_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+nameretcode_3_1 =  outpfad $+ "\\retcode_3_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+nameretcode_4_1 =  outpfad $+ "\\retcode_4_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+nameretcode_5_1 =  outpfad $+ "\\retcode_5_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+nameretcode_6_1 =  outpfad $+ "\\retcode_6_" $+ftos((n),"%*.*lf",1,0)$+"_"$+ftos((b),"%*.*lf",1,0)$+".csv";
+  
+saveretcode_1_1=saved(mc_retcode_1_1,nameretcode_1_1,vnames);
+saveretcode_2_1=saved(mc_retcode_2_1,nameretcode_2_1,vnames);
+saveretcode_3_1=saved(mc_retcode_3_1,nameretcode_3_1,vnames);
+saveretcode_4_1=saved(mc_retcode_4_1,nameretcode_4_1,vnames);
+saveretcode_5_1=saved(mc_retcode_5_1,nameretcode_5_1,vnames);  
+saveretcode_6_1=saved(mc_retcode_6_1,nameretcode_6_1,vnames);       
+    endfor;
+    endfor;
